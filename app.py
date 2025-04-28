@@ -1,11 +1,20 @@
 # app.py
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import sqlite3
 import os
 import re
 from datetime import datetime
 
 app = Flask(__name__)
+
+CORS(app, resources={
+    r"/*": {
+        "origins": ["http://localhost:3000", "https://ultravidz.com", "https://www.ultravidz.com"],
+        "methods": ["POST", "GET", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # SQLite database file from environment variable with fallback
 DATABASE_FILE = os.environ.get('DATABASE_FILE', 'visitor_tracking.db')
