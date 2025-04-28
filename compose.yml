@@ -1,5 +1,6 @@
 services:
-  tracking-api:
+  ultravidz-tracking-api:
+    container_name: ultravidz-tracking-api
     build: .
     ports:
       - "5000:5000"
@@ -10,7 +11,7 @@ services:
       - DATABASE_FILE=/app/data/visitor_tracking.db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -18,10 +19,18 @@ services:
       - proxy
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ultravidz-public-secure.entrypoints=https"
-      - "traefik.http.routers.ultravidz-public-secure.rule=Host(`api.ultravidz.com`)"
-      - "traefik.http.routers.ultravidz-public-secure.middlewares=error-pages-middleware"
-      - "traefik.http.routers.ultravidz-public-secure.tls=true"
+      - "traefik.http.routers.ultravidz-tracking-api.entrypoints=http"
+      - "traefik.http.routers.ultravidz-tracking-api.rule=Host(`api.ultravidz.com`)"
+      - "traefik.http.middlewares.ultravidz-tracking-api-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.ultravidz-tracking-api.middlewares=stashapp-https-redirect"
+      - "traefik.http.routers.ultravidz-tracking-api-secure.entrypoints=https"
+      - "traefik.http.routers.ultravidz-tracking-api-secure.rule=Host(`api.ultravidz.com`)"
+      - "traefik.http.routers.ultravidz-tracking-api-secure.tls=true"
+      - "traefik.http.routers.ultravidz-tracking-api-secure.service=ultravidz-tracking-api"
+      - "traefik.http.services.ultravidz-tracking-api.loadbalancer.server.port=5000"
+      - "traefik.docker.network=proxy"
+
+
 
 networks:
   proxy:
