@@ -11,10 +11,11 @@ services:
       - DATABASE_FILE=/app/data/visitor_tracking.db
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      disable: true
+      #test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      #interval: 30s
+      #timeout: 10s
+      #retries: 3
     networks:
       - proxy
     labels:
