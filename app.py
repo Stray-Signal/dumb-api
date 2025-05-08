@@ -60,6 +60,7 @@ def init_db():
         subscribed_at TEXT NOT NULL,
         visitor_id TEXT,
         source_page TEXT,
+        comments TEXT,
         active BOOLEAN DEFAULT 1
     )
     ''')
@@ -142,6 +143,7 @@ def subscribe():
         name = data.get('name', '').strip()
         visitor_id = data.get('visitor_id', '')
         source_page = data.get('source_page', '')
+        comments = data.get('comments', '')  # Add comments field
         
         # Get current timestamp
         current_time = datetime.now().isoformat()
@@ -161,17 +163,18 @@ def subscribe():
                 SET active = 1, 
                     name = CASE WHEN ? != '' THEN ? ELSE name END,
                     visitor_id = CASE WHEN ? != '' THEN ? ELSE visitor_id END,
-                    source_page = CASE WHEN ? != '' THEN ? ELSE source_page END
+                    source_page = CASE WHEN ? != '' THEN ? ELSE source_page END,
+                    comments = CASE WHEN ? != '' THEN ? ELSE comments END
                 WHERE email = ?
-                ''', (name, name, visitor_id, visitor_id, source_page, source_page, email))
+                ''', (name, name, visitor_id, visitor_id, source_page, source_page, comments, comments, email))
                 
                 message = "Email subscription updated"
             else:
                 # Insert new subscription
                 cursor.execute('''
-                INSERT INTO subscribers (email, name, subscribed_at, visitor_id, source_page)
-                VALUES (?, ?, ?, ?, ?)
-                ''', (email, name, current_time, visitor_id, source_page))
+                INSERT INTO subscribers (email, name, subscribed_at, visitor_id, source_page, comments)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ''', (email, name, current_time, visitor_id, source_page, comments))
                 
                 message = "Email subscription successful"
             
@@ -242,7 +245,7 @@ def get_subscribers():
         cursor = conn.cursor()
         
         # Build query based on filters
-        query = "SELECT id, email, name, subscribed_at, visitor_id, source_page, active FROM subscribers"
+        query = "SELECT id, email, name, subscribed_at, visitor_id, source_page, comments, active FROM subscribers"
         params = []
         
         if active_only:
@@ -272,6 +275,7 @@ def get_subscribers():
                 "subscribed_at": sub["subscribed_at"],
                 "visitor_id": sub["visitor_id"],
                 "source_page": sub["source_page"],
+                "comments": sub["comments"],
                 "active": bool(sub["active"])
             })
         
