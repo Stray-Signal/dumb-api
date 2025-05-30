@@ -23,7 +23,7 @@ services:
       - "traefik.http.routers.ultravidz-tracking-api.entrypoints=http"
       - "traefik.http.routers.ultravidz-tracking-api.rule=Host(`api.ultravidz.com`)"
       - "traefik.http.middlewares.ultravidz-tracking-api-https-redirect.redirectscheme.scheme=https"
-      - "traefik.http.routers.ultravidz-tracking-api.middlewares=stashapp-https-redirect"
+      - "traefik.http.routers.ultravidz-tracking-api.middlewares=ultravidz-https-redirect"
       - "traefik.http.routers.ultravidz-tracking-api-secure.entrypoints=https"
       - "traefik.http.routers.ultravidz-tracking-api-secure.rule=Host(`api.ultravidz.com`)"
       - "traefik.http.routers.ultravidz-tracking-api-secure.tls=true"
